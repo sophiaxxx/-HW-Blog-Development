@@ -37,31 +37,30 @@
     <div class="container">
         <div class="row">
             <div class="col-md-8">
-                <!-- heading -->
-                <div class="row">
-                <input id="input-title" type="text" class="form-control" placeholder="Title">
-                </div></br>
-                <div class="row">
-                    <textarea id="input-post" class="form-control" rows="3" placeholder="新增文章"></textarea>
-                </div></br>
-                <div class="row">
-                    <div class="col-md-1"><h4>Tags:</h4></div>
-                    <div class="col-md-9"><input type="text"  id="input-tags"></div>
-                    <div class="col-md-2">
-                        <button id="btn-addpost" type="submit" class="btn btn-default">
-                            發佈文章
-                        </button>
-                    </div>
-                </div></br>
-
-                
+                <div id="CreatPostContainer">
+                    <!-- heading -->
+                    <div class="row">
+                    <input id="input-title" type="text" class="form-control" placeholder="Title">
+                    </div></br>
+                    <div class="row">
+                        <textarea id="input-post" class="form-control" rows="3" placeholder="新增文章"></textarea>
+                    </div></br>
+                    <div class="row">
+                        <div class="col-md-1"><h4>Tags:</h4></div>
+                        <div class="col-md-9"><input type="text"  id="input-tags"></div>
+                        <div class="col-md-2">
+                            <button id="btn-addpost" class="btn btn-default" type="submit">
+                                發佈文章
+                            </button>
+                        </div>
+                    </div></br>
+                </div>
                 <!-- 文章列表 -->
                 <div id="postContainer" class="row col-md-offset-1">
                     
                 </div>
                 <!-- 文章列表 -->
             </div>
-
             <!-- 使用者資料與登入 -->
             <div id="authorContainer" class="col-md-3 pull-right">
                 <div>

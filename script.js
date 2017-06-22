@@ -1,13 +1,15 @@
 
 var App = (function (){
 	function _bindevent(){
-		$('#btn-addpost').on('click', _handleAddPost);
+		$('#CreatPostContainer').on('click', '#btn-addpost', _handleAddPost);
 		$('#postContainer').on('click', '.taskItem .btn-delTask', _handleDelPost);
 		$('#btn-login').on('click',  _Login);
-		$('#btn-patchAuthor').on('click',  _handlePatAuthor);
-		$('#btn-saveAuthor').on('click',  _handleSaveAuthor);
+		$('#authorContainer').on('click', '#btn-patchAuthor',  _handlePatAuthor);
+		$('#authorContainer').on('click', '#btn-saveAuthor', _handleSaveAuthor);
 		$('#postContainer').on('click','.taskItem #btn-getPost', _renderGetPost);
-		// $('#authorContainer').on('click','#btn-getAuthor', _getAuthor);
+		$('#postContainer').on('click','.taskItem #btn-patchPost', _handlePatPost);
+		$('#CreatPostContainer').on('click', '#btn-updatePost', _handleSavePost);
+
 
 	}
 	
@@ -28,15 +30,8 @@ var App = (function (){
 				password: 'test123'
 			}),
 			success: function (data){
-				console.log("login success");
 				$('#authorContainer').html('');
 				_getAuthor(data.username);
-				// $('#authorContainer').append(`
-				// 	<div class="col-md-offset-2">
-				// 	<button id="btn-getAuthor" type="button" class="btn btn-link">
-				// 		<h4 id="Getusername">${data.username}</h4>
-				// 	</button></div>
-				// 	`);
 			},
 			error: function (jqXHR){
 				console.log(jqXHR);
@@ -46,7 +41,6 @@ var App = (function (){
 
 	// getLogin
 	function _getLogin(){
-		console.log("_getLogin");
 		$.ajax({
 			url: "https://richegg.top/login",
 			type: "get",
@@ -64,8 +58,6 @@ var App = (function (){
 		});
 	}
 
-
-
 	// Add post
 	function _handleAddPost(){
 		
@@ -73,7 +65,6 @@ var App = (function (){
 		var postContent = $('#input-post').val();
 		var taglist = $('#input-tags').val();
 		var postTags = taglist.split(',');
-		console.log(postTags);
 		$.ajax({
 			url: "https://richegg.top/posts",
 			type: "post",
@@ -83,10 +74,29 @@ var App = (function (){
 				content: postContent,
 				tags: postTags
 			}),
+			xhrFields: {
+		         withCredentials: true
+		    },
 			success: function (data){
-				$('#input-title').val('');
-				$('#input-post').val('');
-				$('.input-tags', taglist).remove();
+				$('#CreatPostContainer').html('');
+				$('#CreatPostContainer').append(`
+					<div class="row">
+                    <input id="input-title" type="text" class="form-control" placeholder="Title">
+                    </div></br>
+                    <div class="row">
+                        <textarea id="input-post" class="form-control" rows="3" placeholder="新增文章"></textarea>
+                    </div></br>
+                    <div class="row">
+                        <div class="col-md-1"><h4>Tags:</h4></div>
+                        <div class="col-md-9"><input type="text"  id="input-tags"></div>
+                        <div class="col-md-2">
+                            <button id="btn-addpost" class="btn btn-default" type="submit">
+                                發佈文章
+                            </button>
+                        </div>
+                    </div></br>
+					`);
+				$('#input-tags').inputTags();
 				_renderTODOs();
 			},
 			error: function (jqXHR){
@@ -103,11 +113,98 @@ var App = (function (){
 			url: `https://richegg.top/posts/${id}`,
 			type: 'DELETE',
 			dataType: 'json',
-			
+			xhrFields: {
+		         withCredentials: true
+		    },
 			success: function (data){
 				_renderTODOs();
+			},
+			error: function (jqXHR){
+				console.log(jqXHR);
+			}
+		});
+	}
 
+	//Patch post
+	function _handlePatPost(){
+		var id = $(this).parents('.taskItem').attr('data-id');
+		$.ajax({
+			url: `https://richegg.top/posts/${id}`,
+			type: "get",
+			dataType: "json",
+			success: function (data){
+				$('#CreatPostContainer').html('');
 
+				console.log("hiiiiiii   "+data.id);
+				$('#CreatPostContainer').append(`
+					<div class="row">
+                    <input id="input-id" type="hidden" class="form-control" value="${data.id}">
+                    <input id="input-title" type="text" class="form-control" value="${data.title}">
+                    </div></br>
+                    <div class="row">
+                        <textarea id="input-post" class="form-control" rows="4">${data.content}</textarea>
+                    </div></br>
+                    <div class="row">
+                        <div class="col-md-1"><h4>Tags:</h4></div>
+                        <div class="col-md-9"><input type="text"  id="input-tags" value="${data.tags}"></div>
+                        <div class="col-md-2" >
+                            <button id="btn-updatePost" class="btn btn-default" type="submit">
+                                Update
+                            </button>
+                        </div>
+                    </div></br>
+					`);
+				$('#input-tags').inputTags();
+				$('body').scrollTop(0);
+			},
+			error: function (jqXHR){
+				console.log(jqXHR);
+			}
+		});
+	}
+
+	//Save Patchpost todoooo
+	function _handleSavePost(){
+		console.log("ready patch");
+		var id = $('#input-id').val();
+		var Title = $('#input-title').val();
+		var Content = $('#input-post').val();
+		var taglist = $('#input-tags').val();
+		var postTags = taglist.split(',');
+		$.ajax({
+			url: `https://richegg.top/posts/${id}`,
+			type: 'PATCH',
+			dataType: 'json',
+			data: JSON.stringify({
+				title: Title,
+				content: Content,
+				tags: postTags
+			}),
+			xhrFields: {
+		         withCredentials: true
+		    },
+			success: function (data){
+			console.log("patch OKKKK");
+				$('#CreatPostContainer').html('');
+				$('#CreatPostContainer').append(`
+					<div class="row">
+                    <input id="input-title" type="text" class="form-control" placeholder="Title">
+                    </div></br>
+                    <div class="row">
+                        <textarea id="input-post" class="form-control" rows="3" placeholder="新增文章"></textarea>
+                    </div></br>
+                    <div class="row">
+                        <div class="col-md-1"><h4>Tags:</h4></div>
+                        <div class="col-md-9"><input type="text"  id="input-tags"></div>
+                        <div class="col-md-2">
+                            <button id="btn-addpost" class="btn btn-default" type="submit">
+                                發佈文章
+                            </button>
+                        </div>
+                    </div></br>
+					`);
+				$('#input-tags').inputTags();
+				_renderTODOs();
 			},
 			error: function (jqXHR){
 				console.log(jqXHR);
@@ -208,39 +305,37 @@ var App = (function (){
 
 	// Get author data
 	function _getAuthor(id){
-		console.log("_getAuthor");
-		// var id = $('#Getusername').text();
-
 		$.ajax({
 			url: `https://richegg.top/authors/${id}`,
 			type: "get",
 			dataType: "json",
+			xhrFields: {
+				withCredentials: true
+			},
 			success: function (data){	
-
 				$('#authorContainer').html('');
 				$('#authorContainer').append(`
 					<div class="row taskItem">
 					<div>
 						<label class="control-label" for="inputHelpBlock">username:</label>
-                    	<label id="username" type="text" class="form-control" value="${data.username}" ></label>
+						<label id="username" class="control-label" for="inputHelpBlock">${data.username}</label>
 		            </div>
 		            <div>
 						<label class="control-label" for="inputHelpBlock">name:</label>
-                    	<label id="name" type="text" class="form-control" value="${data.name}"></label>
+						<label id="name" class="control-label" for="inputHelpBlock">${data.name}</label>
 		            </div>
                     <div>
 						<label class="control-label" for="inputHelpBlock">gender:</label>
-	                    <label id="gender"  type="text" class="form-control" value="${data.gender}"></label>
+						<label id="gender" class="control-label" for="inputHelpBlock">${data.gender}</label>
 	                </div>
 	                <div>
 						<label class="control-label" for="inputHelpBlock">address:</label>
-	                    <label id="address"  type="text" class="form-control" value="${data.address}"></label>
+						<label id="address"  class="control-label" for="inputHelpBlock">${data.address}</label>
 	                </div>
 		            </br>
 		            <button id="btn-patchAuthor" class="btn btn-default" type="submit">修改</button>
 					</div>
 					`);
-				_bindevent();
 			},
 			error: function (jqXHR){
 				console.log(jqXHR);
@@ -250,20 +345,20 @@ var App = (function (){
 
 	//Patch Author
 	function _handlePatAuthor(){
-		console.log("patch ok");
-		var data = $('#username').val();
+		var userid = $('#username').text();
 		$.ajax({
-			url: `https://richegg.top/authors/${data}`,
+			url: `https://richegg.top/authors/${userid}`,
 			type: "get",
 			dataType: "json",
+			xhrFields: {
+		         withCredentials: true
+		    },
 			success: function (data){	
-				console.log(data);
 				$('#authorContainer').html('');
 				$('#authorContainer').append(`
 					<div>
-						<label id="username" class="control-label" hidden="hidden">${data.username}</label>
-						<label class="control-label" for="inputHelpBlock">password</label>
-                    	<input id="Password" type="text" class="form-control" value="${data.password}">
+						<label class="control-label" for="inputHelpBlock">username</label>
+                    	<input id="Username" type="text" class="form-control" value="${data.username}">
 		            </div>
 		            <div>
 						<label class="control-label" for="inputHelpBlock">name</label>
@@ -280,7 +375,6 @@ var App = (function (){
 		            </br>
 		            <button id="btn-saveAuthor" class="btn btn-success" type="submit">儲存</button>
 					`);
-				_bindevent();
 			},
 			error: function (jqXHR){
 				console.log(jqXHR);
@@ -290,9 +384,7 @@ var App = (function (){
 
 	//Save author data
 	function _handleSaveAuthor(){
-		console.log("ready patch");
-		var UserName = $('#username').text();
-		var Password = $('#Password').val();
+		var UserName = $('#Username').val();
 		var Name = $('#Name').val();
 		var Gender = $('#Gender').val();
 		var Address = $('#Address').val();
@@ -302,13 +394,15 @@ var App = (function (){
 			type: 'PATCH',
 			dataType: 'json',
 			data: JSON.stringify({
-				password: Password,
+				username: UserName,
 				name: Name,
 				gender: Gender,
 				address: Address
 			}),
+			xhrFields: {
+		         withCredentials: true
+		    },
 			success: function (data){
-				console.log(data);
 				_renderTODOs();
 				_getAuthor(data.username);
 			},
@@ -316,8 +410,7 @@ var App = (function (){
 				console.log(jqXHR);
 			}
 		});
-	}
-	
+	}	
 
 	function init(){
 		_bindevent();
