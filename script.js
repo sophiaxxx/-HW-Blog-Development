@@ -78,25 +78,10 @@ var App = (function (){
 		         withCredentials: true
 		    },
 			success: function (data){
-				$('#CreatPostContainer').html('');
-				$('#CreatPostContainer').append(`
-					<div class="row">
-                    <input id="input-title" type="text" class="form-control" placeholder="Title">
-                    </div></br>
-                    <div class="row">
-                        <textarea id="input-post" class="form-control" rows="3" placeholder="新增文章"></textarea>
-                    </div></br>
-                    <div class="row">
-                        <div class="col-md-1"><h4>Tags:</h4></div>
-                        <div class="col-md-9"><input type="text"  id="input-tags"></div>
-                        <div class="col-md-2">
-                            <button id="btn-addpost" class="btn btn-default" type="submit">
-                                發佈文章
-                            </button>
-                        </div>
-                    </div></br>
-					`);
-				$('#input-tags').inputTags();
+				$('#input-title').val('');
+				$('#input-post').val('');
+				$('#input-tags').attr('value', '');
+				$('.inputTags-item').remove();
 				_renderTODOs();
 			},
 			error: function (jqXHR){
@@ -133,28 +118,15 @@ var App = (function (){
 			type: "get",
 			dataType: "json",
 			success: function (data){
-				$('#CreatPostContainer').html('');
-
-				console.log("hiiiiiii   "+data.id);
-				$('#CreatPostContainer').append(`
-					<div class="row">
-                    <input id="input-id" type="hidden" class="form-control" value="${data.id}">
-                    <input id="input-title" type="text" class="form-control" value="${data.title}">
-                    </div></br>
-                    <div class="row">
-                        <textarea id="input-post" class="form-control" rows="4">${data.content}</textarea>
-                    </div></br>
-                    <div class="row">
-                        <div class="col-md-1"><h4>Tags:</h4></div>
-                        <div class="col-md-9"><input type="text"  id="input-tags" value="${data.tags}"></div>
-                        <div class="col-md-2" >
-                            <button id="btn-updatePost" class="btn btn-default" type="submit">
-                                Update
-                            </button>
-                        </div>
-                    </div></br>
-					`);
-				$('#input-tags').inputTags();
+				$('#input-id').val(data.id);
+				$('#input-title').val(data.title);
+				$('#input-post').val(data.content);
+				$('.inputTags-list').remove();
+				$('#input-tags').inputTags({
+					tags: data.tags
+				});
+				$('#btn-updatePost').show();
+				$('#btn-addpost').hide();
 				$('body').scrollTop(0);
 			},
 			error: function (jqXHR){
@@ -163,7 +135,7 @@ var App = (function (){
 		});
 	}
 
-	//Save Patchpost todoooo
+	//Save Patchpost
 	function _handleSavePost(){
 		console.log("ready patch");
 		var id = $('#input-id').val();
@@ -171,6 +143,8 @@ var App = (function (){
 		var Content = $('#input-post').val();
 		var taglist = $('#input-tags').val();
 		var postTags = taglist.split(',');
+		console.log(id);
+
 		$.ajax({
 			url: `https://richegg.top/posts/${id}`,
 			type: 'PATCH',
@@ -185,25 +159,14 @@ var App = (function (){
 		    },
 			success: function (data){
 			console.log("patch OKKKK");
-				$('#CreatPostContainer').html('');
-				$('#CreatPostContainer').append(`
-					<div class="row">
-                    <input id="input-title" type="text" class="form-control" placeholder="Title">
-                    </div></br>
-                    <div class="row">
-                        <textarea id="input-post" class="form-control" rows="3" placeholder="新增文章"></textarea>
-                    </div></br>
-                    <div class="row">
-                        <div class="col-md-1"><h4>Tags:</h4></div>
-                        <div class="col-md-9"><input type="text"  id="input-tags"></div>
-                        <div class="col-md-2">
-                            <button id="btn-addpost" class="btn btn-default" type="submit">
-                                發佈文章
-                            </button>
-                        </div>
-                    </div></br>
-					`);
+				$('#btn-updatePost').hide();
+				$('#btn-addpost').show();
+				$('#input-title').val('');
+				$('#input-post').val('');
+				$('#input-tags').attr('value', '');
+				$('.inputTags-list').remove();
 				$('#input-tags').inputTags();
+				
 				_renderTODOs();
 			},
 			error: function (jqXHR){
@@ -221,6 +184,7 @@ var App = (function (){
 			success: function (data){
 				
 				$('#postContainer').html('');
+				data.reverse();
 				for(let postlist of data){
 
 					var time  = moment(postlist.created_at).format('LLLL');
@@ -366,7 +330,13 @@ var App = (function (){
 		            </div>
                     <div>
 						<label class="control-label" for="inputHelpBlock">gender</label>
-	                    <input id="Gender"  type="text" class="form-control" value="${data.gender}">
+						<div>
+		                    <select class="selectpicker">
+			                    <option value="F">F</option>
+			                    <option value="M">M</option>
+			                    <option value="O">O</option>
+		                    </select>
+	                	</div>
 	                </div>
 	                <div>
 						<label class="control-label" for="inputHelpBlock">address</label>
@@ -375,6 +345,10 @@ var App = (function (){
 		            </br>
 		            <button id="btn-saveAuthor" class="btn btn-success" type="submit">儲存</button>
 					`);
+				$('.selectpicker').val(data.gender);
+				$('.selectpicker').change();
+
+
 			},
 			error: function (jqXHR){
 				console.log(jqXHR);
@@ -386,7 +360,7 @@ var App = (function (){
 	function _handleSaveAuthor(){
 		var UserName = $('#Username').val();
 		var Name = $('#Name').val();
-		var Gender = $('#Gender').val();
+		var Gender = $('.selectpicker').val();
 		var Address = $('#Address').val();
 
 		$.ajax({

@@ -9,6 +9,8 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-modal/2.2.6/js/bootstrap-modalmanager.min.js"></script>
     <link rel="stylesheet" href="css/inputTags.css">
+
+
 </head>
 <body>
     <!-- Navigation -->
@@ -40,6 +42,7 @@
                 <div id="CreatPostContainer">
                     <!-- heading -->
                     <div class="row">
+                    <input id="input-id" type="hidden" class="form-control" value="">
                     <input id="input-title" type="text" class="form-control" placeholder="Title">
                     </div></br>
                     <div class="row">
@@ -49,9 +52,14 @@
                         <div class="col-md-1"><h4>Tags:</h4></div>
                         <div class="col-md-9"><input type="text"  id="input-tags"></div>
                         <div class="col-md-2">
-                            <button id="btn-addpost" class="btn btn-default" type="submit">
+                            <button id="btn-addpost" class="btn btn-default" type="submit" style="display: hide;">
                                 發佈文章
                             </button>
+                            <div class="col-md-2" >
+                            <button id="btn-updatePost" class="btn btn-default" type="submit" style="display: none;">
+                                 Update
+                            </button>
+                         </div>
                         </div>
                     </div></br>
                 </div>
@@ -99,9 +107,15 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script type="text/javascript" src="js/inputTags.jquery.js"></script>
 
+
     <script>
         $(document).ready(function () {
-            $('#input-tags').inputTags();
+            $('#input-tags').inputTags({
+                destroy: function() {
+                    console.log('Event called when an item is deleted');
+                }
+            });
+
             App.init();
         });
     </script>
