@@ -26,14 +26,14 @@ var App = (function (){
 		         withCredentials: true
 		    },
 			data: JSON.stringify({
-				username: 'test1',
-				password: 'test123'
+				username: user,
+				password: password
 			}),
 			success: function (data){
-				$('#authorContainer').html('');
 				_getAuthor(data.username);
 			},
 			error: function (jqXHR){
+				alert(jqXHR.responseText);
 				console.log(jqXHR);
 			}
 		});
@@ -330,8 +330,8 @@ var App = (function (){
 		            </div>
                     <div>
 						<label class="control-label" for="inputHelpBlock">gender</label>
-						<div>
-		                    <select class="selectpicker">
+						<div class="col-md-12">
+		                    <select class="selectpicker" data-width="100%">
 			                    <option value="F">F</option>
 			                    <option value="M">M</option>
 			                    <option value="O">O</option>

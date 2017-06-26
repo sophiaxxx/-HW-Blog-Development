@@ -38,7 +38,19 @@
     <!-- Page Content -->
     <div class="container">
         <div class="row">
-            <div class="col-md-8">
+        <!-- 使用者資料與登入 -->
+            <div id="authorContainer" class="col-md-3 col-sm-3 col-xs-12 pull-right">
+                <div>
+                    <input id="user"  type="text" class="form-control" placeholder="username">
+                </div></br>
+                <div>
+                    <input id="password" type="password" class="form-control" placeholder="password">
+                </div></br>
+                <button id="btn-login" class="btn btn-info btn-block login" type="button">登入</button>
+            </div>
+            <!-- 使用者資料與登入 -->
+            <!-- 新增文章 -->
+            <div class="col-md-8 col-sm-8">
                 <div id="CreatPostContainer">
                     <!-- heading -->
                     <div class="row">
@@ -64,22 +76,12 @@
                     </div></br>
                 </div>
                 <!-- 文章列表 -->
-                <div id="postContainer" class="row col-md-offset-1">
+                <div id="postContainer" class="row col-md-offset-1 col-xs-offset-1">
                     
                 </div>
                 <!-- 文章列表 -->
             </div>
-            <!-- 使用者資料與登入 -->
-            <div id="authorContainer" class="col-md-3 pull-right">
-                <div>
-                    <input id="user"  type="text" class="form-control" placeholder="username">
-                </div></br>
-                <div>
-                    <input id="password" type="password" class="form-control" placeholder="password">
-                </div></br>
-                <button id="btn-login" class="btn btn-info btn-block login" type="button">登入</button>
-            </div>
-            <!-- 使用者資料與登入 -->
+            
         </div>
         <!-- Modal -->
         <div class="modal fade" id="postModal" role="dialog" aria-labelledby="exampleModalLabel" >
